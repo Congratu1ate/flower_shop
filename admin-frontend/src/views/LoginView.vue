@@ -33,11 +33,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { View, Hide } from '@element-plus/icons-vue'
 import AppLogo from '../components/AppLogo.vue'
-import { login } from '../api/auth'
+import { login, logout } from '../api/auth'
 const DEFAULT_AVATAR = '/default-avatar.svg'
 
 const formRef = ref()
@@ -45,6 +45,7 @@ const loading = ref(false)
 const showPwd = ref(false)
 const form = ref({ phone: '', password: '' })
 const route = useRoute()
+const router = useRouter()
 
 const rules = {
   phone: [
@@ -62,14 +63,21 @@ const onSubmit = async () => {
   loading.value = true
   try {
     const { data } = await login({ phone: form.value.phone, password: form.value.password })
-    ElMessage.success('登录成功')
-    console.log('login response', data)
-    try {
-      // 设置默认头像（后续可被 /api/auth/me 返回的真实头像覆盖）
-      localStorage.setItem('userAvatar', DEFAULT_AVATAR)
-    } catch (e) {
-      // localStorage 写入失败时静默处理
+    const isAdmin = Number(data?.user?.type) === 1
+    if (!isAdmin) {
+      // 非管理员不允许登录后台：提示错误并清除后端 Cookie
+      ElMessage.error('仅管理员可访问后台页面')
+      try { await logout() } catch (_) { /* ignore */ }
+      return
     }
+    // 管理员：提示成功并保存信息，然后跳转
+    ElMessage.success('登录成功')
+    if (data?.user) {
+      localStorage.setItem('currentUser', JSON.stringify(data.user))
+      localStorage.setItem('userAvatar', data.user.avatar || DEFAULT_AVATAR)
+    }
+    const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : null
+    router.push(redirect || '/admin/products')
   } catch (e) {
     const status = e?.response?.status
     if (status === 401) ElMessage.error('账号或密码错误')

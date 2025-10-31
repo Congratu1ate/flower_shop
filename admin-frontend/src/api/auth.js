@@ -1,13 +1,21 @@
-import http from './http'
+import http from './http';
 
-export const register = (data) => {
-  return http.post('/auth/register', data)
+// 登录：返回 { user }
+export function login(payload) {
+  return http.post('/auth/login', payload);
 }
 
-export const login = (data) => {
-  return http.post('/auth/login', data)
+// 注册：返回 { user }
+export function register(payload) {
+  return http.post('/auth/register', payload);
 }
 
-export const me = () => {
-  return http.get('/auth/me')
+// 获取当前登录用户信息
+export function me() {
+  return http.get('/auth/me');
+}
+
+// 退出登录：清除后端 Cookie
+export function logout() {
+  return http.post('/auth/logout');
 }
