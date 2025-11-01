@@ -175,21 +175,21 @@ onMounted(fetchList)
             <img :src="getImageUrl(row.image)" class="thumb" alt="flower" />
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="商品名称" min-width="220" />
-        <el-table-column label="分类" width="120">
+        <el-table-column prop="name" label="商品名称" min-width="280" />
+        <el-table-column label="分类" min-width="120">
           <template #default="{ row }">{{ row.categoryId }}</template>
         </el-table-column>
-        <el-table-column label="价格" width="120">
+        <el-table-column label="价格" min-width="120">
           <template #default="{ row }">{{ toCurrency(row.price) }}</template>
         </el-table-column>
-        <el-table-column prop="inventory" label="库存" width="100" />
-        <el-table-column label="状态" width="160">
+        <el-table-column prop="inventory" label="库存" min-width="100" />
+        <el-table-column label="状态" min-width="160">
           <template #default="{ row }">
             <el-tag :type="row.status === 1 ? 'success' : 'info'" round style="margin-right:8px;">{{ row.status === 1 ? '在售' : '下架' }}</el-tag>
             <el-button size="small" round @click="onToggleStatus(row)">{{ row.status === 1 ? '下架' : '上架' }}</el-button>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="160">
+        <el-table-column label="操作" min-width="160">
           <template #default="{ row }">
             <el-button link type="primary" @click="openEdit(row)">编辑</el-button>
             <el-button link type="danger" @click="onDelete(row)">删除</el-button>
@@ -260,14 +260,15 @@ onMounted(fetchList)
 </template>
 
 <style scoped>
-.page { display:flex; flex-direction:column; gap: 12px; }
+.page { display:flex; flex-direction:column; gap: 12px; max-width: 1200px; margin: 0 auto; }
 .header { display:flex; align-items:center; justify-content:space-between; }
 .title { font-size:28px; font-weight:800; }
 .tip { background:#f2e6ec; border-radius:16px; padding:12px 16px; color:#7a6d74; }
 .search-bar { background:#f2e6ec; border-radius:18px; padding:8px 12px; }
 .add-btn { background:#f06292; border-color:#f06292; }
-.card { background:#fff; border-radius:18px; padding:0; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+.card { background:#fff; border-radius:18px; padding:12px; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
 .table :deep(.el-table__header-wrapper) th { background: #fff; }
+.table { width: 100%; }
 .thumb { width:64px; height:64px; border-radius:50%; object-fit:cover; box-shadow:0 0 0 4px #f7eaf0 inset; }
 .pager { display:flex; justify-content:center; padding:14px; }
 </style>

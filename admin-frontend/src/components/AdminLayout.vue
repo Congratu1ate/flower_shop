@@ -80,8 +80,8 @@ async function onLogout() {
 </template>
 
 <style scoped>
-.admin-shell { display: grid; grid-template-columns: 260px 1fr; height: 100vh; background: #f8f4f6; }
-.sidebar { background: #f7eaf0; padding: 20px 16px; display:flex; flex-direction:column; gap: 16px; }
+.admin-shell { display: grid; grid-template-columns: clamp(220px, 20vw, 260px) 1fr; height: 100vh; background: #f8f4f6; }
+.sidebar { background: #f7eaf0; padding: 16px 12px; display:flex; flex-direction:column; gap: 16px; }
 .user-block { display:flex; align-items:center; gap:12px; padding:8px; }
 .avatar { width:40px; height:40px; border-radius:50%; background:#f06292; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; }
 .user-info { line-height:1.2; }
@@ -95,5 +95,5 @@ async function onLogout() {
 .bottom-action { margin-top:auto; }
 .brand-btn { width:100%; background:#f06292; border-color:#f06292; }
 .brand-btn:hover { filter:brightness(1.05); }
-.content { padding: 24px 28px; overflow:auto; }
+.content { padding: 24px 28px; overflow:auto; min-width: 0; }
 </style>
