@@ -6,6 +6,8 @@ const RegisterView = () => import('../views/RegisterView.vue')
 const AdminLayout = () => import('../components/AdminLayout.vue')
 const ProductManageView = () => import('../views/ProductManageView.vue')
 const OrderManageView = () => import('../views/OrderManageView.vue')
+const CustomerManageView = () => import('../views/CustomerManageView.vue')
+const SystemHomeView = () => import('../views/SystemHomeView.vue')
 
 const router = createRouter({
   history: createWebHistory(),
@@ -18,9 +20,10 @@ const router = createRouter({
       component: AdminLayout,
       meta: { requiresAuth: true, requiresAdmin: true },
       children: [
-        { path: '', redirect: '/admin/products' },
+        { path: '', component: SystemHomeView, meta: { requiresAuth: true, requiresAdmin: true } },
         { path: 'products', component: ProductManageView, meta: { requiresAuth: true, requiresAdmin: true } },
         { path: 'orders', component: OrderManageView, meta: { requiresAuth: true, requiresAdmin: true } },
+        { path: 'customers', component: CustomerManageView, meta: { requiresAuth: true, requiresAdmin: true } },
       ]
     },
   ],
