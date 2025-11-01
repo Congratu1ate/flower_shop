@@ -19,3 +19,8 @@ jwt:
   # 使用 Base64 编码的密钥（示例值，请替换为安全随机值）
   secret: ZmFzdF9kZXZfYmFzZTY0X3NlY3JldF9zaGFyZWRfa2V5X2Zvcl9qc3V0
   expire-seconds: 3600
+
+app:
+  upload:
+    # 文件上传保存的本地目录，相对于应用启动目录
+    dir: uploads

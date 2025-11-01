@@ -19,6 +19,15 @@ const uploadList = ref([])
 
 function toCurrency(v) { return `¥${v}` }
 
+// 处理图片路径：如果是相对路径则添加 / 前缀，如果已经是完整URL则直接使用
+function getImageUrl(imagePath) {
+  if (!imagePath) return '/default-avatar.svg' // 默认图片
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://') || imagePath.startsWith('/')) {
+    return imagePath
+  }
+  return `/${imagePath}` // 添加 / 前缀以访问 public 目录
+}
+
 async function fetchList() {
   loading.value = true
   try {
@@ -78,20 +87,30 @@ function openCreate() {
 function openEdit(row) {
   editing.value = true
   form.value = { id: row.id, name: row.name, categoryId: row.categoryId, price: row.price, image: row.image, description: row.description, status: row.status, inventory: row.inventory }
-  uploadList.value = form.value.image ? [{ name: form.value.image, url: form.value.image }] : []
+  uploadList.value = form.value.image ? [{ name: form.value.image, url: getImageUrl(form.value.image) }] : []
   showDialog.value = true
 }
 
 function onImageChange(file, fileList) {
   const latest = fileList.slice(-1)
   uploadList.value = latest
-  const f = latest[0]
-  form.value.image = f?.name || f?.raw?.name || ''
 }
 
 function onImageRemove() {
   uploadList.value = []
   form.value.image = ''
+}
+
+// 上传成功：后端返回 { url, name, size, type }
+function onUploadSuccess(response, file, fileList) {
+  const url = response?.url || ''
+  form.value.image = url
+  uploadList.value = url ? [{ name: file?.name || response?.name || 'image', url: getImageUrl(url) }] : []
+  ElMessage.success('图片上传成功')
+}
+
+function onUploadError(err, file, fileList) {
+  ElMessage.error('图片上传失败')
 }
 
 async function onSubmit() {
@@ -153,7 +172,7 @@ onMounted(fetchList)
       <el-table :data="rows" border stripe class="table" :loading="loading">
         <el-table-column label="商品图片" width="120">
           <template #default="{ row }">
-            <img :src="row.image" class="thumb" alt="flower" />
+            <img :src="getImageUrl(row.image)" class="thumb" alt="flower" />
           </template>
         </el-table-column>
         <el-table-column prop="name" label="商品名称" min-width="220" />
@@ -212,7 +231,19 @@ onMounted(fetchList)
           </el-radio-group>
         </el-form-item>
         <el-form-item label="商品图片">
-          <el-upload :auto-upload="false" action="#" :limit="1" :file-list="uploadList" :on-change="onImageChange" :on-remove="onImageRemove" accept="image/*" list-type="picture">
+          <el-upload
+            action="/api/files"
+            name="file"
+            :auto-upload="true"
+            :limit="1"
+            :file-list="uploadList"
+            :on-change="onImageChange"
+            :on-remove="onImageRemove"
+            :on-success="onUploadSuccess"
+            :on-error="onUploadError"
+            accept="image/*"
+            list-type="picture"
+          >
             <el-button type="primary" plain>选择图片</el-button>
           </el-upload>
         </el-form-item>
